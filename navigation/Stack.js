@@ -1,6 +1,7 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import { Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { YELLOW_COLOR } from "../color";
 
 const NativeStack = createStackNavigator();
 
@@ -32,8 +33,16 @@ const ScreenThree = ({ navigation }) => {
 
 function Stack() {
   return (
-    <NativeStack.Navigator>
-      <NativeStack.Screen name="One" component={ScreenOne} />
+    <NativeStack.Navigator
+      screenOptions={{
+        headerBackTitleVisible: false,
+      }}
+    >
+      <NativeStack.Screen
+        options={{ title: "1" }}
+        name="One"
+        component={ScreenOne}
+      />
       <NativeStack.Screen name="Two" component={ScreenTwo} />
       <NativeStack.Screen name="Three" component={ScreenThree} />
     </NativeStack.Navigator>
