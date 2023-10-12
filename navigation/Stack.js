@@ -24,6 +24,7 @@ const ScreenTwo = ({ navigation: { navigate } }) => {
 const ScreenThree = ({ navigation: { navigate } }) => {
   return (
     <TouchableOpacity onPress={() => navigate("Tabs", { screen: "Search" })}>
+      {/* 한 스크린에서 다른 스크린으로 넘어가려면 prop를 사용*/}
       <Text>Go to search </Text>
     </TouchableOpacity>
   );
