@@ -1,11 +1,10 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Movies from "../screens/Movies";
 import Tv from "../screens/Tv";
 import Search from "../screens/Search";
-import { Text, View } from "react-native";
 import { useColorScheme } from "react-native";
 import { BLACK_COLOR, WHITE_COLOR, YELLOW_COLOR } from "../color";
 import { Ionicons } from "@expo/vector-icons";
+import Movies from "../screens/Movies";
 
 const Tab = createBottomTabNavigator();
 
@@ -37,6 +36,7 @@ const Tabs = () => {
         name="Movies"
         component={Movies}
         options={{
+          headerShown: false,
           tabBarIcon: ({ color, size }) => {
             return <Ionicons name={"film-outline"} color={color} size={size} />;
           },
