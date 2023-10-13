@@ -39,7 +39,6 @@ const Tabs = () => {
         name="Movies"
         component={Movies}
         options={{
-          headerShown: false,
           tabBarIcon: ({ color, size }) => {
             return <Ionicons name={"film-outline"} color={color} size={size} />;
           },
