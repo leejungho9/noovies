@@ -22,7 +22,38 @@ const BgImg = styled.Image`
   height: 100%;
   position: absolute;
 `;
-const Title = styled.Text``;
+
+const Poster = styled.Image`
+  width: 100px;
+  height: 160px;
+  border-radius: 5px;
+`;
+const Title = styled.Text`
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+`;
+
+const Wrapper = styled.View`
+  flex-direction: row;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+`;
+const Column = styled.View`
+  width: 40%;
+  margin-left: 15px;
+`;
+
+const OverView = styled.Text`
+  margin-top: 10px;
+  color: rgba(255, 255, 255, 0.6);
+`;
+
+const Votes = styled(OverView)`
+  margin-top: 5px;
+  font-size: 12px;
+`;
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -37,7 +68,6 @@ const Movies = () => {
     ).json();
     setNowPlaying(results);
     setLoading(false);
-    console.log(MOVIE_API_KEY);
   };
 
   useEffect(() => {
@@ -59,18 +89,20 @@ const Movies = () => {
         {nowPlaying.map((movie) => (
           <View key={movie.id}>
             <BgImg
-              blurRadius={3}
+              blurRadius={10}
               source={{ uri: makeImgPath(movie.backdrop_path) }}
             />
-            <View
-              style={{
-                position: "absolute",
-                width: "100%",
-                height: "100%",
-                backgroundColor: "#ffffff60", // white의 alpha값 50%
-              }}
-            >
-              <Title>{movie.original_title}</Title>
+            <View>
+              <Wrapper>
+                <Poster source={{ uri: makeImgPath(movie.poster_path) }} />
+                <Column>
+                  <Title>{movie.original_title}</Title>
+                  {movie.vote_average > 0 && (
+                    <Votes> ★ {movie.vote_average} / 10</Votes>
+                  )}
+                  <OverView>{movie.overview.slice(0, 90)}...</OverView>
+                </Column>
+              </Wrapper>
             </View>
           </View>
         ))}
