@@ -1,40 +1,82 @@
-import { Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Dimensions, Text } from "react-native";
+import Swiper from "react-native-web-swiper";
 import styled from "styled-components/native";
+import { makeImgPath } from "../utills";
+import { MOVIE_API_KEY } from "@env";
 
-const Btn = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
+const Container = styled.ScrollView`
   background-color: ${(props) => props.theme.mainBgColor};
 `;
 
-const Title = styled.Text`
-  color: ${(props) => props.theme.textColor};
+const View = styled.View`
+  flex: 1;
 `;
+const Loader = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
+const BgImg = styled.Image`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+`;
+const Title = styled.Text``;
 
-const Header = styled.View``;
-const Column = styled.View``;
-const Footer = styled.View``;
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-const Movies = ({ navigation: { navigate } }) => (
-  <Header>
-    <Column>
-      <Btn onPress={() => navigate("Stack", { screen: "Three" })}>
-        <Title>Movies</Title>
-      </Btn>
-    </Column>
-    <Footer></Footer>
-  </Header>
-);
+const Movies = () => {
+  const [loading, setLoading] = useState(true);
+  const [nowPlaying, setNowPlaying] = useState([]);
+  const getNowPlaying = async () => {
+    const { results } = await (
+      await fetch(
+        `https://api.themoviedb.org/3/movie/now_playing?api_key=${MOVIE_API_KEY}&language=en-US&page=1&region=KR`
+      )
+    ).json();
+    setNowPlaying(results);
+    setLoading(false);
+    console.log(MOVIE_API_KEY);
+  };
 
-// const styles = StyleSheet.create({
-//   btn: {
-//     flex: 1,
-//     justifyContent: "center",
-//     alignItems: "center",
-//   },
-// });
-// ! 아직 js 코드 , 우리는 css 코드를 작성하는데 익숙하기 때문에 어려움이 있음
-// ! align-items 의 경우 alignItems 로 작성해야함, 이를 해결하기 위해 styled-component 사용
+  useEffect(() => {
+    getNowPlaying();
+  }, []);
+
+  return loading ? (
+    <Loader>
+      <ActivityIndicator size="large" />
+    </Loader>
+  ) : (
+    <Container>
+      <Swiper
+        loop
+        timeout={3.5}
+        controlsEnabled={false}
+        containerStyle={{ width: "100%", height: SCREEN_HEIGHT / 4 }}
+      >
+        {nowPlaying.map((movie) => (
+          <View key={movie.id}>
+            <BgImg
+              blurRadius={3}
+              source={{ uri: makeImgPath(movie.backdrop_path) }}
+            />
+            <View
+              style={{
+                position: "absolute",
+                width: "100%",
+                height: "100%",
+                backgroundColor: "#ffffff60", // white의 alpha값 50%
+              }}
+            >
+              <Title>{movie.original_title}</Title>
+            </View>
+          </View>
+        ))}
+      </Swiper>
+    </Container>
+  );
+};
 
 export default Movies;
