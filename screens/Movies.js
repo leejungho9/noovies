@@ -11,6 +11,8 @@ import { MOVIE_API_KEY } from "@env";
 import Slide from "../components/Slide";
 import Poster from "../components/Poster";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import HMedia from "../components/HMedia";
+import VMedia from "../components/VMedia";
 
 const Container = styled.ScrollView``;
 
@@ -31,47 +33,8 @@ const TrendingScroll = styled.ScrollView`
   margin-top: 20px;
 `;
 
-const Movie = styled.View`
-  margin-right: 20px;
-`;
-
-const Title = styled.Text`
-  color: ${(props) => (props.isDark ? "white" : "black")};
-  font-weight: 600;
-  margin-top: 7px;
-  margin-bottom: 5px;
-`;
-
-const Votes = styled.Text`
-  color: rgba(0, 0, 0, 0.8);
-  font-size: 12px;
-`;
-
 const ListContainer = styled.View`
   margin-bottom: 40px;
-`;
-
-const HMovie = styled.View`
-  padding: 0px 30px;
-  margin-bottom: 30px;
-  flex-direction: row;
-`;
-
-const HColumn = styled.View`
-  margin-left: 15px;
-  width: 80%;
-`;
-
-const OverView = styled.Text`
-  color: ${(props) => (props.isDark ? "white" : "black")};
-  opacity: 0.8;
-  width: 80%;
-`;
-
-const Release = styled.Text`
-  color: ${(props) => (props.isDark ? "white" : "black")};
-  font-size: 12px;
-  margin-vertical: 10px;
 `;
 
 const ComingSoonTitle = styled(ListTitle)`
@@ -86,7 +49,6 @@ const Movies = () => {
   const [nowPlaying, setNowPlaying] = useState([]);
   const [upComming, setUpComming] = useState([]);
   const [trending, setTrending] = useState([]);
-  const isDark = useColorScheme() === "dark";
   const getTrending = async () => {
     const { results } = await (
       await fetch(
@@ -166,37 +128,24 @@ const Movies = () => {
           showsHorizontalScrollIndicator={false}
         >
           {trending.map((movie) => (
-            <Movie key={movie.id}>
-              <Poster path={movie.poster_path} />
-              <Title isDark={isDark}>
-                {movie.original_title.slice(0, 13)}
-                {movie.original_title.length > 13 && "..."}
-              </Title>
-              <Votes>
-                {movie.vote_average > 0
-                  ? `⭐️ ${movie.vote_average} / 10`
-                  : `Coming soon`}
-              </Votes>
-            </Movie>
+            <VMedia
+              key={movie.id}
+              posterPath={movie.poster_path}
+              originalTitle={movie.original_title}
+              voteAverage={movie.vote_average}
+            />
           ))}
         </TrendingScroll>
       </ListContainer>
       <ComingSoonTitle>Coming soon</ComingSoonTitle>
       {upComming.map((movie) => (
-        <HMovie key={movie.id}>
-          <Poster path={movie.poster_path} />
-          <HColumn>
-            <Title isDark={isDark}>{movie.original_title}</Title>
-            <Release>
-              {new Date(movie.release_date).toLocaleDateString("ko")}
-            </Release>
-            <OverView isDark={isDark}>
-              {movie.overview !== "" && movie.overview.length > 140
-                ? `${movie.overview.slice(0, 140)}...`
-                : movie.overview}
-            </OverView>
-          </HColumn>
-        </HMovie>
+        <HMedia
+          key={movie.id}
+          posterPath={movie.poster_path}
+          originalTitle={movie.original_title}
+          overview={movie.overview}
+          releaseDate={movie.release_date}
+        />
       ))}
     </Container>
   );
