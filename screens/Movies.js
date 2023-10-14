@@ -4,6 +4,7 @@ import Swiper from "react-native-web-swiper";
 import styled from "styled-components/native";
 import { MOVIE_API_KEY } from "@env";
 import Slide from "../components/Slide";
+import Poster from "../components/Poster";
 
 const Container = styled.ScrollView``;
 
@@ -13,6 +14,32 @@ const Loader = styled.View`
   align-items: center;
 `;
 
+const ListTitle = styled.Text`
+  color: black;
+  font-size: 18px;
+  font-weight: 600;
+  margin-left: 30px;
+`;
+
+const TrendingScroll = styled.ScrollView`
+  margin-top: 20px;
+`;
+
+const Movie = styled.View`
+  margin-right: 20px;
+`;
+
+const Title = styled.Text`
+  color: ${(props) => (props.isDark ? "white" : "black")};
+  font-weight: 600;
+  margin-top: 7px;
+  margin-bottom: 5px;
+`;
+
+const Votes = styled.Text`
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 15px;
+`;
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const Movies = () => {
@@ -20,6 +47,7 @@ const Movies = () => {
   const [nowPlaying, setNowPlaying] = useState([]);
   const [upComming, setUpComming] = useState([]);
   const [trending, setTrending] = useState([]);
+  const isDark = useColorScheme() === "dark";
   const getTrending = async () => {
     const { results } = await (
       await fetch(
@@ -66,7 +94,11 @@ const Movies = () => {
         loop
         timeout={3.5}
         controlsEnabled={false}
-        containerStyle={{ width: "100%", height: SCREEN_HEIGHT / 3 }}
+        containerStyle={{
+          width: "100%",
+          height: SCREEN_HEIGHT / 3,
+          marginBottom: 20,
+        }}
       >
         {nowPlaying.map((movie) => (
           <Slide
@@ -79,6 +111,25 @@ const Movies = () => {
           />
         ))}
       </Swiper>
+      <ListTitle>Trending Movies</ListTitle>
+      <TrendingScroll
+        style={{ flex: 1 }}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      >
+        {trending.map((movie) => (
+          <Movie key={movie.id}>
+            <Poster path={movie.poster_path} />
+            <Title isDark={isDark}>
+              {movie.original_title.slice(0, 13)}
+              {movie.original_title.length > 13 && "..."}
+            </Title>
+            {movie.vote_average > 0 && (
+              <Votes> ⭐️ {movie.vote_average} / 10</Votes>
+            )}
+          </Movie>
+        ))}
+      </TrendingScroll>
     </Container>
   );
 };
