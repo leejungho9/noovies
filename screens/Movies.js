@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Dimensions, useColorScheme } from "react-native";
+import {
+  ActivityIndicator,
+  Dimensions,
+  RefreshControl,
+  useColorScheme,
+} from "react-native";
 import Swiper from "react-native-web-swiper";
 import styled from "styled-components/native";
 import { MOVIE_API_KEY } from "@env";
 import Slide from "../components/Slide";
 import Poster from "../components/Poster";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 const Container = styled.ScrollView``;
 
@@ -75,6 +81,7 @@ const ComingSoonTitle = styled(ListTitle)`
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 const Movies = () => {
+  const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [nowPlaying, setNowPlaying] = useState([]);
   const [upComming, setUpComming] = useState([]);
@@ -111,7 +118,11 @@ const Movies = () => {
     await Promise.all([getNowPlaying(), getUpcoming(), getTrending()]);
     setLoading(false);
   };
-
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await getData();
+    setRefreshing(false);
+  };
   useEffect(() => {
     getData();
   }, []);
@@ -121,7 +132,11 @@ const Movies = () => {
       <ActivityIndicator size="large" />
     </Loader>
   ) : (
-    <Container>
+    <Container
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <Swiper
         loop
         timeout={3.5}
